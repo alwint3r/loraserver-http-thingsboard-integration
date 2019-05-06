@@ -1,0 +1,1 @@
+{"applicationID":"1","applicationName":"weather-station","deviceName":"proto0","devEUI":"eb597bef6709204f","rxInfo":[{"gatewayID":"b827ebfffe3318e0","name":"","time":"2019-05-06T11:00:51.687215Z","rssi":-66,"loRaSNR":7.2,"location":null}],"txInfo":{"frequency":923200000,"dr":0},"adr":true,"fCnt":247,"fPort":1,"data":"AGcBDg=="}
