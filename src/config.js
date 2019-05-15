@@ -1,6 +1,12 @@
 'use strict';
 
 module.exports = {
-  iotc_devicebridge_url: process.env.AZURE_IOTC_DEVICEBRIDGE_URL || ``,
+  mqtt: {
+    uri: process.env.MQTT_URI || `mqtt://localhost:1883`,
+    options: {
+      username: process.env.MQTT_USERNAME || ``,
+      password: ``,
+    },
+  },
   port: process.env.PORT ? parseInt(process.env.PORT, 10) : 8090,
 };

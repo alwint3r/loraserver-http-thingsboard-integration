@@ -4,12 +4,13 @@ require(`dotenv`).config();
 
 const express = require(`express`);
 const bodyParser = require(`body-parser`);
-const fetch = require(`node-fetch`);
 const http = require(`http`);
 const payloadTransformer = require(`./payload_function`);
+const mqtt = require(`mqtt`);
 const config = require(`./config`);
 
 const app = express();
+const mqttClient = mqtt.connect(config.mqtt.uri, config.mqtt.options);
 
 app.disable(`x-powered-by`);
 app.use(bodyParser.json());
@@ -20,29 +21,13 @@ app.post(`/uplink`, async (req, res, next) => {
     const { body } = req;
     const transformedPayload = payloadTransformer(body.data);
 
-    const requestBody = {
-      measurements: transformedPayload,
-      device: {
-        deviceId: body.devEUI || ``,
-      },
+    const payload = {
+      [body.devEUI]: [transformedPayload],
     };
 
-    const requestOptions = {
-      method: `POST`,
-      headers: {
-        'Content-Type': `application/json`,
-        'Accept': `application/json`,
-      },
-      body: JSON.stringify(requestBody),
-    };
+    mqttClient.publish(`v1/gateway/telemetry`, JSON.stringify(payload), { qos: 1 });
 
-    const response = await fetch(config.iotc_devicebridge_url, requestOptions);
-    if (!response.ok) {
-      throw new Error(response.statusText);
-    }
-
-    const responseText = await response.text();
-    res.status(response.status).end(responseText);
+    res.status(200).json({ message: `OK` });
   } catch (exception) {
     next(exception);
   }
@@ -58,6 +43,11 @@ app.use((req, res, next) => {
 app.use((err, req, res, next) => {
   const code = err.code || 500;
   res.status(code).json({ error: { code, message: err.message } });
+});
+
+mqttClient.on(`error`, (error) => {
+  console.error(`MQTT Error`, error);
+  process.exit(-1);
 });
 
 process.on(`unhandledRejection`, (rejection) => {

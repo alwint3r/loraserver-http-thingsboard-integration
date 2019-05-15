@@ -1,5 +1,5 @@
 {
-  "name": "loraserver-http-integration-azure-iotc-device-bridge",
+  "name": "loraserver-http-integration-thingsboard",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -15,6 +15,7 @@
     "dotenv": "^8.0.0",
     "express": "^4.16.4",
     "lpp-node": "^2.0.0",
+    "mqtt": "^2.18.8",
     "node-fetch": "^2.5.0"
   }
 }
